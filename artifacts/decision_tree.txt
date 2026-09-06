@@ -1,0 +1,22 @@
+|--- categories__thal_2 <= 0.50
+|   |--- categories__cp_0 <= 0.50
+|   |   |--- categories__ca_0 <= 0.50
+|   |   |   |--- class: 0
+|   |   |--- categories__ca_0 >  0.50
+|   |   |   |--- class: 1
+|   |--- categories__cp_0 >  0.50
+|   |   |--- numeric__chol <= 233.50
+|   |   |   |--- class: 0
+|   |   |--- numeric__chol >  233.50
+|   |   |   |--- class: 0
+|--- categories__thal_2 >  0.50
+|   |--- categories__ca_0 <= 0.50
+|   |   |--- categories__cp_0 <= 0.50
+|   |   |   |--- class: 1
+|   |   |--- categories__cp_0 >  0.50
+|   |   |   |--- class: 0
+|   |--- categories__ca_0 >  0.50
+|   |   |--- numeric__trestbps <= 157.50
+|   |   |   |--- class: 1
+|   |   |--- numeric__trestbps >  157.50
+|   |   |   |--- class: 0

@@ -1,0 +1,6 @@
+-r requirements.txt
+streamlit>=1.45,<2
+plotly>=6,<7
+seaborn>=0.13,<1
+matplotlib>=3.9,<4
+jupyter>=1,<2

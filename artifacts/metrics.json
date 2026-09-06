@@ -1,0 +1,50 @@
+{
+  "source_rows": 1025,
+  "missing_rows_removed": 3,
+  "duplicate_rows_removed": 720,
+  "unique_rows": 302,
+  "train_rows": 241,
+  "test_rows": 61,
+  "seed": 42,
+  "data_sha256": "0cdca5a52e9e084ff0b47f33e42d6b8ca677eeb46c141b498c97d7d9adef076c",
+  "sklearn_version": "1.7.2",
+  "best_parameters": {
+    "classifier__max_depth": 3,
+    "classifier__min_samples_leaf": 5
+  },
+  "cv_f1": 0.8048524300676523,
+  "ml": {
+    "accuracy": 0.7868852459016393,
+    "precision": 0.7941176470588235,
+    "recall": 0.8181818181818182,
+    "f1": 0.8059701492537313,
+    "confusion_matrix": [
+      [
+        21,
+        7
+      ],
+      [
+        6,
+        27
+      ]
+    ]
+  },
+  "expert_system": {
+    "accuracy": 0.36065573770491804,
+    "precision": 0.125,
+    "recall": 0.030303030303030304,
+    "f1": 0.04878048780487805,
+    "confusion_matrix": [
+      [
+        21,
+        7
+      ],
+      [
+        32,
+        1
+      ]
+    ]
+  },
+  "rule_binary_mapping": "High=1; Medium/Low/Undetermined=0 (evaluation convention only)",
+  "target_note": "0/1 labels inherited from upstream; original clinical provenance unverified."
+}

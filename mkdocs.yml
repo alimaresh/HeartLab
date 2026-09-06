@@ -1,0 +1,22 @@
+site_name: HeartLab — Expert System Project
+site_description: Rule-based ES, machine learning, bilingual NLP and Python GUI
+extra_css:
+  - stylesheets/rtl.css
+theme:
+  name: mkdocs
+nav:
+  - الرئيسية: index.md
+  - التشغيل: setup.md
+  - المتطلبات والمعمارية: architecture.md
+  - قاعدة المعرفة: rules.md
+  - التعلم الآلي والتقييم: ml.md
+  - التصنيف وتوصية المراجعة: assessment.md
+  - معالجة اللغة: nlp.md
+  - دليل الواجهة والعرض: user-guide.md
+  - الاختبارات: testing.md
+  - المصادر والتغييرات: attribution.md
+markdown_extensions:
+  - tables
+  - fenced_code
+  - toc:
+      permalink: true

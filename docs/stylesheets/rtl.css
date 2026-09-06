@@ -1,0 +1,16 @@
+/* Arabic reading order while keeping code and identifiers left-to-right. */
+.col-md-9[role="main"] {
+  direction: rtl;
+  text-align: right;
+  line-height: 1.9;
+}
+.col-md-9[role="main"] pre {
+  direction: ltr;
+  text-align: left;
+  line-height: 1.5;
+}
+.col-md-9[role="main"] code {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+.col-md-9[role="main"] table { width: 100%; }

@@ -1,0 +1,110 @@
+{
+  "raw_rows": 294,
+  "missing_rows_removed": 1,
+  "duplicate_rows_removed": 0,
+  "rows_used": 293,
+  "sha256": "b8e4bbd06b9bf9ec831c992ba397639f22815e525c43b489e1a6e75b3be29a75",
+  "source": "https://archive.ics.uci.edu/dataset/45/heart+disease",
+  "source_file": "hungarian.data",
+  "license": "CC BY 4.0",
+  "target": "Angiographic coronary disease: original num>0 =>1, num=0 =>0",
+  "sklearn_version": "1.7.2",
+  "seed": 42,
+  "train_rows": 234,
+  "test_rows": 59,
+  "train_class_counts": {
+    "0": 149,
+    "1": 85
+  },
+  "test_class_counts": {
+    "0": 38,
+    "1": 21
+  },
+  "variants": {
+    "basic": {
+      "features": [
+        "age",
+        "sex",
+        "systolic",
+        "bpm",
+        "exang"
+      ],
+      "accuracy": 0.847457627118644,
+      "precision": 0.9285714285714286,
+      "recall": 0.6190476190476191,
+      "f1": 0.7428571428571429,
+      "roc_auc": 0.8583959899749374,
+      "brier": 0.1303772188659619,
+      "baseline_brier": 0.22929798885904923,
+      "confusion_matrix": [
+        [
+          37,
+          1
+        ],
+        [
+          8,
+          13
+        ]
+      ],
+      "calibration_bins": {
+        "observed": [
+          0.0625,
+          0.21428571428571427,
+          1.0,
+          0.9090909090909091,
+          1.0
+        ],
+        "predicted": [
+          0.11273227031924218,
+          0.25920951415026394,
+          0.5044550346100996,
+          0.7486464954010537,
+          0.8150662170862285
+        ]
+      }
+    },
+    "with_diastolic": {
+      "features": [
+        "age",
+        "sex",
+        "systolic",
+        "bpm",
+        "exang",
+        "diastolic"
+      ],
+      "accuracy": 0.847457627118644,
+      "precision": 0.9285714285714286,
+      "recall": 0.6190476190476191,
+      "f1": 0.7428571428571429,
+      "roc_auc": 0.8533834586466165,
+      "brier": 0.13099295210719059,
+      "baseline_brier": 0.22929798885904923,
+      "confusion_matrix": [
+        [
+          37,
+          1
+        ],
+        [
+          8,
+          13
+        ]
+      ],
+      "calibration_bins": {
+        "observed": [
+          0.07142857142857142,
+          0.2,
+          1.0,
+          0.9090909090909091,
+          1.0
+        ],
+        "predicted": [
+          0.10400984372101417,
+          0.2600125254386187,
+          0.5028869753892774,
+          0.746133927727708,
+          0.8142000062839012
+        ]
+      }
+    }
+  }
+}
