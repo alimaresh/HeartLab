@@ -26,7 +26,7 @@ def evaluate(basic, facts, current_warning=False, prediction=None):
         add('U05', 'urgent', 'ضغط انقباضي منخفض مع ألم صدر أو ضيق تنفس.')
 
     if prediction and not prediction.get('inconclusive'):
-        add('A01', 'appointment', f"المصنف رجّح: {prediction['top']['label']}.")
+        add('A01', 'appointment', f"تطابق نمط الأعراض بصورة أكبر مع: {prediction['top']['label']}.")
     if facts.get('exercise_worse'):
         add('A02', 'appointment', 'الأعراض تزداد أثناء المجهود وتتحسن بالراحة.')
     if facts.get('chest_pain') or facts.get('shortness_of_breath') or facts.get('palpitations'):
@@ -51,7 +51,7 @@ def evaluate(basic, facts, current_warning=False, prediction=None):
         'urgent': ('نعم — تحتاج تقييمًا طبيًا عاجلًا اليوم',
                    'تواصل مع خدمة طبية عاجلة اليوم. عند تدهور الأعراض اتصل بالإسعاف.'),
         'appointment': ('نعم — يُنصح بحجز موعد مع الطبيب',
-                        'رتب مراجعة طبية لمناقشة الأعراض والقياسات ونتيجة التصنيف.'),
+                        'رتب مراجعة طبية لمناقشة الأعراض والقياسات والنتيجة الأولية.'),
         'routine': ('لا تظهر حاجة عاجلة لزيارة الطبيب',
                     'تابع القياسات والرعاية المعتادة، وراجع الطبيب إذا استمرت الأعراض أو تغيرت.'),
     }
@@ -62,6 +62,6 @@ def evaluate(basic, facts, current_warning=False, prediction=None):
         'title': title,
         'action': action,
         'reasons': [item['reason'] for item in matching] or
-                   ['كل الإجابات سلبية، والقياسات المدخلة ضمن حدود قواعد الفرز.'],
+                   ['كل الإجابات سلبية، والقياسات المدخلة ضمن الحدود التي يفحصها النظام.'],
         'fired_rules': fired,
     }

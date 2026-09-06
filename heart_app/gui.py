@@ -101,7 +101,8 @@ class HeartApp:
         self.write(self.results_output, format_summary(self.result))
         prediction = self.result['prediction']
         if prediction.get('available'):
-            self.score_label.set(f"{prediction['top']['score']:.0%}")
+            self.score_label.set('—' if prediction.get('inconclusive')
+                                 else f"{prediction['top']['score']:.0%}")
             self.class_label.set(prediction['top']['label'])
         else:
             self.score_label.set('!')

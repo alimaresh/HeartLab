@@ -100,17 +100,20 @@ def summarize(answers, basic_values=None, current_warning=False):
 
 def format_summary(result):
     triage, prediction = result['triage'], result['prediction']
-    lines = [triage['title'], triage['action'], '', 'التصنيف الأولي']
+    lines = ['التوصية', triage['title'], triage['action'], '', 'النتيجة الأولية']
     if prediction.get('available'):
         top = prediction['top']
-        lines += [f"{top['label']} — {top['score']:.0%}", top['detail'], '', 'ترتيب التصنيفات']
-        lines += [f"• {item['label']}: {item['score']:.0%}" for item in prediction['ranking']]
-        lines += ['', prediction['notice']]
+        if prediction.get('inconclusive'):
+            lines += [top['label'], top['detail'],
+                      'إذا استمرت الأعراض أو ظهرت أعراض جديدة، راجع الطبيب.']
+        else:
+            score = round(top['score'] * 100)
+            lines += [f"النمط الأقرب: {top['label']}",
+                      f"درجة التوافق مع هذا النمط: {score} من 100", top['detail'],
+                      '', prediction['notice']]
     else:
-        lines.append(prediction['reason'])
-    lines += ['', 'لماذا هذه التوصية؟']
+        lines += ['لم يُجرَ تصنيف الأمراض لأن التعامل مع علامة الخطر الحالية له الأولوية.']
+    lines += ['', 'سبب التوصية']
     lines += ['• ' + reason for reason in triage['reasons']]
-    if triage['fired_rules']:
-        lines += ['', 'قواعد النظام الخبير: ' + '، '.join(item['id'] for item in triage['fired_rules'])]
-    lines += ['', 'مشروع أكاديمي تعليمي — لا يقدم تشخيصًا طبيًا معتمدًا.']
+    lines += ['', 'هذه النتيجة إرشادية ولا تغني عن تقييم الطبيب.']
     return '\n'.join(lines)

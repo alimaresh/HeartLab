@@ -18,7 +18,7 @@ def test_arabic_inputs_and_complete_assessment():
     assert result['prediction']['available']
     assert len(result['prediction']['ranking']) == 4
     assert result['triage']['visit_required']
-    assert 'التصنيف الأولي' in format_summary(result)
+    assert 'النتيجة الأولية' in format_summary(result)
 
 
 @pytest.mark.parametrize('values', [dict(age='nan'), dict(bpm='-1'), dict(age='40.5'),
@@ -52,3 +52,7 @@ def test_no_symptoms_is_inconclusive_and_routine():
                                            diastolic='80', spo2='98'))
     assert result['prediction']['inconclusive']
     assert result['triage']['level'] == 'routine'
+    summary = format_summary(result)
+    assert 'ترتيب التصنيفات' not in summary
+    assert 'DDXPlus' not in summary
+    assert 'إذا استمرت الأعراض' in summary

@@ -131,11 +131,11 @@ def predict(basic, facts, artifact=MODEL):
         key=lambda item: item['score'], reverse=True)
     no_reported_symptom = not any(facts[key] for key in SYMPTOMS)
     inconclusive = no_reported_symptom or ranking[0]['score'] < .45
-    top = ({'class': 'inconclusive', 'label': 'لا يوجد نمط كافٍ للتصنيف',
-            'detail': 'لا توجد أعراض كافية أو أن درجات الأمراض متقاربة.', 'score': 0.0}
+    top = ({'class': 'inconclusive', 'label': 'لا توجد مؤشرات كافية',
+            'detail': 'لم تظهر في الإجابات مؤشرات كافية لترجيح حالة محددة.', 'score': 0.0}
            if inconclusive else ranking[0])
     return {'top': top, 'ranking': ranking, 'inconclusive': inconclusive,
-            'notice': 'النسب درجات نموذج على مرضى DDXPlus اصطناعيين وليست احتمالات سريرية.'}
+            'notice': 'درجة التوافق استرشادية ولا تمثل احتمال إصابة أو تشخيصًا طبيًا.'}
 
 
 if __name__ == '__main__':
