@@ -1,0 +1,115 @@
+{
+  "raw_rows": 10392,
+  "duplicate_rows_removed": 5274,
+  "rows_used": 5118,
+  "unique_feature_patterns": 4945,
+  "sha256": "67b69c5d21b1668b8d099e24cf683fb5baeb52540ae9722f7ccd51e6b7496dbe",
+  "source": "https://figshare.com/articles/dataset/DDXPlus_Dataset_English_/22687585",
+  "paper": "https://arxiv.org/abs/2205.09148",
+  "license": "CC BY 4.0",
+  "source_partition": "release_validate_patients.zip; resampled into project train/test groups",
+  "selected_conditions": {
+    "stable_angina": "الذبحة الصدرية المستقرة",
+    "atrial_fibrillation": "الرجفان الأذيني",
+    "heart_attack": "اشتباه جلطة قلبية",
+    "pulmonary_edema": "الوذمة الرئوية الحادة"
+  },
+  "features": [
+    "age",
+    "sex",
+    "chest_pain",
+    "shortness_of_breath",
+    "palpitations",
+    "exercise_worse",
+    "hypertension",
+    "dizziness",
+    "sweating",
+    "fatigue",
+    "swelling",
+    "orthopnea"
+  ],
+  "sklearn_version": "1.7.2",
+  "seed": 42,
+  "split_strategy": "GroupShuffleSplit by the full feature vector; identical inputs cannot cross the split",
+  "train_rows": 4103,
+  "test_rows": 1015,
+  "feature_group_overlap": 0,
+  "class_counts": {
+    "pulmonary_edema": 1738,
+    "atrial_fibrillation": 1705,
+    "heart_attack": 935,
+    "stable_angina": 740
+  },
+  "cv_accuracy_mean": 0.9510115564005822,
+  "cv_balanced_accuracy_mean": 0.9250397731481284,
+  "cv_macro_f1_mean": 0.9251888079079762,
+  "accuracy": 0.9635467980295567,
+  "balanced_accuracy": 0.9401190625058522,
+  "macro_f1": 0.9396003464365975,
+  "confusion_matrix": [
+    [
+      128,
+      0,
+      17,
+      0
+    ],
+    [
+      0,
+      352,
+      0,
+      0
+    ],
+    [
+      19,
+      0,
+      140,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      358
+    ]
+  ],
+  "classification_report": {
+    "stable_angina": {
+      "precision": 0.8648648648648649,
+      "recall": 0.8827586206896552,
+      "f1-score": 0.8737201365187713,
+      "support": 145.0
+    },
+    "atrial_fibrillation": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 352.0
+    },
+    "heart_attack": {
+      "precision": 0.89171974522293,
+      "recall": 0.8805031446540881,
+      "f1-score": 0.8860759493670886,
+      "support": 159.0
+    },
+    "pulmonary_edema": {
+      "precision": 1.0,
+      "recall": 0.9972144846796658,
+      "f1-score": 0.99860529986053,
+      "support": 359.0
+    },
+    "accuracy": 0.9635467980295567,
+    "macro avg": {
+      "precision": 0.9391461525219487,
+      "recall": 0.9401190625058522,
+      "f1-score": 0.9396003464365975,
+      "support": 1015.0
+    },
+    "weighted avg": {
+      "precision": 0.9637328521141392,
+      "recall": 0.9635467980295567,
+      "f1-score": 0.9636204910290829,
+      "support": 1015.0
+    }
+  },
+  "limitation": "DDXPlus patients are synthesized from a medical knowledge base; no clinical validation."
+}

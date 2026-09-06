@@ -1,0 +1,122 @@
+{
+  "dataset": "project-authored labelled Arabic/English symptom sentences",
+  "dataset_sha256": "d8049905500e05c503e80367857e4e9d963df273682c2d5bd7abd98507e37755",
+  "rows": 396,
+  "train_rows": 297,
+  "test_rows": 99,
+  "labels": [
+    "chest_pain",
+    "shortness_of_breath",
+    "palpitations",
+    "exercise_worse",
+    "hypertension",
+    "dizziness",
+    "sweating",
+    "fatigue",
+    "swelling",
+    "orthopnea"
+  ],
+  "states": {
+    "-1": "not mentioned",
+    "0": "explicitly absent",
+    "1": "present"
+  },
+  "sklearn_version": "1.7.2",
+  "seed": 42,
+  "exact_match_accuracy": 0.7575757575757576,
+  "macro_f1_all_outputs": 0.9322395306801678,
+  "per_label": {
+    "chest_pain": {
+      "accuracy": 0.9393939393939394,
+      "macro_f1": 0.8810601773250331,
+      "test_state_counts": {
+        "-1": 79,
+        "0": 9,
+        "1": 11
+      }
+    },
+    "shortness_of_breath": {
+      "accuracy": 0.9595959595959596,
+      "macro_f1": 0.8441558441558442,
+      "test_state_counts": {
+        "-1": 81,
+        "0": 5,
+        "1": 13
+      }
+    },
+    "palpitations": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "test_state_counts": {
+        "-1": 80,
+        "0": 9,
+        "1": 10
+      }
+    },
+    "exercise_worse": {
+      "accuracy": 0.9696969696969697,
+      "macro_f1": 0.9172965762561138,
+      "test_state_counts": {
+        "-1": 87,
+        "0": 6,
+        "1": 6
+      }
+    },
+    "hypertension": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "test_state_counts": {
+        "-1": 79,
+        "0": 8,
+        "1": 12
+      }
+    },
+    "dizziness": {
+      "accuracy": 0.9292929292929293,
+      "macro_f1": 0.7785996055226825,
+      "test_state_counts": {
+        "-1": 82,
+        "0": 8,
+        "1": 9
+      }
+    },
+    "sweating": {
+      "accuracy": 0.98989898989899,
+      "macro_f1": 0.9723629663749426,
+      "test_state_counts": {
+        "-1": 83,
+        "0": 9,
+        "1": 7
+      }
+    },
+    "fatigue": {
+      "accuracy": 0.98989898989899,
+      "macro_f1": 0.975894538606403,
+      "test_state_counts": {
+        "-1": 88,
+        "0": 3,
+        "1": 8
+      }
+    },
+    "swelling": {
+      "accuracy": 0.9797979797979798,
+      "macro_f1": 0.9544117647058824,
+      "test_state_counts": {
+        "-1": 84,
+        "0": 6,
+        "1": 9
+      }
+    },
+    "orthopnea": {
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "test_state_counts": {
+        "-1": 86,
+        "0": 6,
+        "1": 7
+      }
+    }
+  },
+  "limitation": "Small authored phrase dataset; users must review extracted answers before applying them.",
+  "final_model_rows": 396
+}

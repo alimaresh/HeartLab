@@ -74,15 +74,13 @@ def build(app, root):
     header.pack(fill='x')
     icon(header, 'pulse').pack(side='right', padx=(12, 0))
     label(header, 'HeartLab', 20).pack(side='right')
-    label(header, 'التقييم المبدئي', 11, TEAL).pack(side='right', padx=36)
-    button(header, 'الفحوصات الاختيارية', app.open_advanced).pack(side='left')
-    button(header, 'تصنيف ECG', app.open_multiclass).pack(side='left', padx=8)
+    label(header, 'نظام خبير · ML · NLP', 11, TEAL).pack(side='right', padx=36)
     app.demo_label = tk.StringVar(value='')
     label(header, textvariable=app.demo_label, size=9, color=TEAL).pack(side='left', padx=14)
 
     footer = tk.Frame(root, bg=WHITE, padx=26, pady=12, highlightbackground=BORDER, highlightthickness=1)
     footer.pack(side='bottom', fill='x')
-    button(footer, 'ابدأ التقييم  ←', app.run, True).pack(side='right')
+    button(footer, 'تحليل الحالة  ←', app.run, True).pack(side='right')
     button(footer, 'بدء من جديد', app.clear).pack(side='right', padx=10)
     app.demo_button = tk.Menubutton(footer, text='Dummy Data  ▾', font=('Segoe UI', 11),
                                   bg=WHITE, fg=TEAL, relief='flat', padx=14, pady=9, cursor='hand2')
@@ -104,8 +102,8 @@ def build(app, root):
     window = app.canvas.create_window((0, 0), window=shell, anchor='nw')
     shell.bind('<Configure>', lambda _: app.canvas.configure(scrollregion=app.canvas.bbox('all')))
     app.canvas.bind('<Configure>', lambda event: app.canvas.itemconfigure(window, width=event.width))
-    label(shell, 'صحتك تبدأ بفهم الأعراض', 23).pack(fill='x')
-    label(shell, 'أدخل قياسات الراحة وأجب عن الأسئلة لبدء التقييم.', 11, MUTED).pack(fill='x', pady=(3, 18))
+    label(shell, 'تقييم قلبي مبسط في خطوة واحدة', 23).pack(fill='x')
+    label(shell, 'أدخل القياسات، أجب عن الأسئلة، ثم احصل على تصنيف أولي وتوصية مراجعة.', 11, MUTED).pack(fill='x', pady=(3, 18))
     columns = tk.Frame(shell, bg=BG)
     columns.pack(fill='both', expand=True)
     columns.columnconfigure(0, weight=4, uniform='column')
@@ -119,8 +117,8 @@ def build(app, root):
     fields = tk.Frame(basics, bg=WHITE)
     fields.pack(fill='x')
     for index, (key, title) in enumerate(BASIC_FIELDS.items()):
-        # First row: age and sex. Second row: pulse and the two BP measurements.
-        row, col = (0, 2-index) if index < 2 else (1, 4-index)
+        row, raw_col = divmod(index, 3)
+        col = 2 - raw_col
         cell = tk.Frame(fields, bg=WHITE, padx=5, pady=5)
         cell.grid(row=row, column=col, sticky='ew')
         fields.columnconfigure(col, weight=1, uniform='fields')
@@ -133,7 +131,7 @@ def build(app, root):
         else:
             ttk.Entry(cell, textvariable=variable, justify='right', width=8,
                       font=('Segoe UI', 12), style='Heart.TEntry').pack(fill='x')
-    label(basics, 'ضغط الراحة مثل 120/80 · اترك غير المعروف فارغًا', 9, MUTED).pack(fill='x', pady=(7, 0))
+    label(basics, 'قياسات الراحة · مثال الضغط 120/80 وSpO₂ يكتب 97', 9, MUTED).pack(fill='x', pady=(7, 0))
 
     symptoms = card(right, 'الأعراض')
     app.answers = {}
@@ -154,10 +152,10 @@ def build(app, root):
     app.note.bind('<<Modified>>', app.note_changed)
     actions = tk.Frame(notes, bg=WHITE)
     actions.pack(fill='x')
-    button(actions, 'فهم الأعراض', app.parse).pack(side='right')
+    button(actions, 'تحليل النص بنموذج NLP', app.parse).pack(side='right')
     app.apply_button = ttk.Button(actions, text='استخدام الإجابات', command=app.apply, state='disabled', style='Heart.TButton')
     app.apply_button.pack(side='right', padx=7)
-    app.feedback = tk.StringVar(value='راجع الأعراض المستخرجة قبل استخدامها.')
+    app.feedback = tk.StringVar(value='أدخل وصفًا أو أجب عن الأسئلة مباشرة.')
     label(notes, textvariable=app.feedback, size=9, color=MUTED, wraplength=440).pack(fill='x', pady=(8, 0))
 
     chart = card(left, 'إيقاع النبض التوضيحي', 'pulse')
@@ -173,8 +171,12 @@ def build(app, root):
     app.basic_values['bpm'].trace_add('write', app.update_pulse)
 
     result_card = card(left, 'نتيجة التقييم', 'pulse')
+    app.result_accent = tk.Frame(result_card, bg=TEAL, height=5)
+    app.result_accent.pack(fill='x', pady=(0, 10))
+    app.visit_label = tk.StringVar(value='أكمل البيانات والأسئلة')
+    label(result_card, textvariable=app.visit_label, size=12, color=INK, wraplength=340).pack(fill='x')
     app.score_label = tk.StringVar(value='—')
-    label(result_card, textvariable=app.score_label, size=28, color=TEAL).pack(fill='x')
+    label(result_card, textvariable=app.score_label, size=28, color=TEAL).pack(fill='x', pady=(6, 0))
     app.class_label = tk.StringVar(value='بانتظار بياناتك')
     label(result_card, textvariable=app.class_label, size=11, wraplength=340).pack(fill='x', pady=(0, 8))
     box = tk.Frame(result_card, bg=WHITE)

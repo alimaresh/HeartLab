@@ -1,8 +1,9 @@
-"""Tk integration tests run hidden; no screenshots or desktop interaction required."""
+"""Hidden Tk integration tests; no desktop interaction is required."""
 import tkinter as tk
+
 import pytest
-from heart_app.gui import AdvancedApp as HeartApp
-from heart_app.schema import DEMO
+
+from heart_app.gui import HeartApp
 
 
 @pytest.fixture
@@ -17,26 +18,19 @@ def app():
     root.destroy()
 
 
-def test_demo_prediction_and_stale_result(app):
-    app.load_demo()
+def test_one_screen_dummy_nlp_and_result(app):
+    app.load_dummy('appointment')
+    app.root.update()
     app.run()
-    assert app.result['inputs']['age'] == DEMO['age']
-    assert 'R01' in app.results_output.get('1.0', 'end')
-    app.variables['age'].set('40')
-    assert app.result is None
-    assert str(app.export_button['state']) == 'disabled'
-
-
-def test_nlp_application_clears_previous_case(app):
-    app.load_demo()
-    app.set_note('العمر ٦٠، الكوليسترول ٢٨٠')
-    app.root.update()
+    assert app.result['prediction']['available']
+    assert app.result['triage']['visit_required']
+    assert '%' in app.score_label.get()
+    app.note.delete('1.0', 'end')
+    app.note.insert('1.0', 'لدي خفقان ودوخة وتعب شديد')
     app.parse()
-    app.root.update()
-    assert app.proposal is not None
     app.apply()
-    assert app.variables['age'].get() == '60'
-    assert app.variables['sex'].get() == ''
-    app.set_note('age 30')
-    app.root.update()
-    assert app.proposal is None
+    assert app.answers['palpitations'].get() == 'yes'
+    assert app.answers['dizziness'].get() == 'yes'
+    app.clear()
+    assert app.result is None
+    assert all(not value.get() for value in app.basic_values.values())

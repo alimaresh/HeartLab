@@ -1,48 +1,67 @@
-"""Conservative teaching triage. Not a clinically validated decision protocol.
-
-Sources and the distinction between guidance and project rules: docs/assessment.md.
-"""
+"""Readable IF/THEN rules for the unified visit recommendation."""
 
 
-def evaluate(basic, facts, current_warning=None):
-    reasons = []
-    systolic, diastolic, pulse = basic.get('systolic'), basic.get('diastolic'), basic.get('bpm')
-    severe_bp = (systolic is not None and systolic > 180) or (diastolic is not None and diastolic > 120)
-    low_bp = (systolic is not None and systolic < 90) or (diastolic is not None and diastolic < 60)
-    fast = pulse is not None and pulse > 100
-    slow = pulse is not None and pulse < 50
-    elevated_bp = (systolic is not None and systolic >= 140) or (diastolic is not None and diastolic >= 90)
-    symptoms = facts['exercise_angina'] or facts['shortness_of_breath']
-    if low_bp:
-        reasons.append('قراءة ضغط منخفضة؛ يلزم تفسيرها مع الأعراض والتأكد من القياس.')
-    if fast:
-        reasons.append(f'نبض الراحة {pulse} ضربة/دقيقة، أعلى من 100.')
-    if slow:
-        reasons.append('نبض الراحة أقل من 50؛ قد يتأثر بالرياضة أو الأدوية ويحتاج تفسيرًا مع الأعراض.')
-    if facts['exercise_angina']:
-        reasons.append('ألم الصدر أثناء المجهود يحتاج تقييمًا طبيًا حتى مع انخفاض نتيجة النموذج.')
-    if facts['shortness_of_breath']:
-        reasons.append('أُبلغ عن ضيق التنفس.')
-    if severe_bp:
-        reasons.append('قراءة ضغط شديدة الارتفاع.')
-    elif elevated_bp:
-        reasons.append('قراءة ضغط مرتفعة؛ أعد القياس وناقش تكرار القراءات مع الطبيب.')
-    if current_warning is True:
-        return {'level': 'emergency', 'title': 'اطلب المساعدة الطارئة الآن',
-                'action': 'اتصل بالإسعاف المحلي؛ لا تنتظر نتيجة النموذج.',
-                'reasons': ['أُبلغ عن ألم صدر مستمر أو علامة خطر موجودة الآن.'] + reasons}
-    if severe_bp or (low_bp and (symptoms or fast)) or ((fast or slow) and symptoms):
-        return {'level': 'urgent', 'title': 'نعم — يلزم تقييم طبي عاجل اليوم',
-                'action': 'تواصل مع خدمة طبية عاجلة. إذا كان ألم الصدر مستمرًا الآن أو ترافق مع ضيق نفس شديد أو إغماء، اتصل بالإسعاف.',
-                'reasons': reasons}
-    if symptoms or low_bp or fast or slow or elevated_bp or facts['hypertension']:
-        return {'level': 'appointment', 'title': 'نعم — احجز موعدًا طبيًا',
-                'action': 'راجع الطبيب لتقييم الأعراض أو القياسات. إذا ظهرت علامات خطر الآن، اطلب المساعدة الطارئة.',
-                'reasons': reasons or ['تاريخ ارتفاع ضغط الدم يستدعي متابعة القياسات مع الطبيب.']}
-    if current_warning is None or any(key not in basic for key in ('bpm', 'systolic', 'diastolic')):
-        return {'level': 'incomplete', 'title': 'لا تكفي المعلومات لتحديد الحاجة إلى زيارة عاجلة',
-                'action': 'أكمل القياسات وسؤال الأعراض الحالية. لا تؤخر المساعدة عند وجود ألم مستمر أو ضيق نفس شديد.',
-                'reasons': ['بعض قياسات الفرز أو معلومات الأعراض الحالية غير متوفرة.']}
-    return {'level': 'routine', 'title': 'لا تظهر علامة تستدعي زيارة عاجلة من المدخلات',
-            'action': 'تابع رعايتك المعتادة، وراجع الطبيب إذا استمرت الأعراض أو ظهرت أعراض جديدة.',
-            'reasons': ['هذا الفرز المحدود لا يستبعد المرض ولا يغني عن التقييم الطبي.']}
+def evaluate(basic, facts, current_warning=False, prediction=None):
+    """Return the highest-priority matching recommendation and its rule trace."""
+    systolic = basic.get('systolic')
+    diastolic = basic.get('diastolic')
+    pulse = basic.get('bpm')
+    spo2 = basic.get('spo2')
+    fired = []
+
+    def add(rule_id, level, reason):
+        fired.append({'id': rule_id, 'level': level, 'reason': reason})
+
+    if current_warning:
+        add('E01', 'emergency', 'أعراض شديدة أو مستمرة موجودة الآن.')
+    if spo2 is not None and spo2 < 90:
+        add('U01', 'urgent', f'تشبع الأكسجين {spo2}% أقل من 90%.')
+    if (systolic is not None and systolic >= 180) or (diastolic is not None and diastolic >= 120):
+        add('U02', 'urgent', 'قراءة ضغط الدم شديدة الارتفاع.')
+    if facts.get('chest_pain') and facts.get('shortness_of_breath'):
+        add('U03', 'urgent', 'اجتمع ألم الصدر مع ضيق التنفس.')
+    if facts.get('dizziness') and facts.get('palpitations'):
+        add('U04', 'urgent', 'اجتمعت الدوخة مع خفقان القلب.')
+    if systolic is not None and systolic < 90 and (facts.get('chest_pain') or facts.get('shortness_of_breath')):
+        add('U05', 'urgent', 'ضغط انقباضي منخفض مع ألم صدر أو ضيق تنفس.')
+
+    if prediction and not prediction.get('inconclusive'):
+        add('A01', 'appointment', f"المصنف رجّح: {prediction['top']['label']}.")
+    if facts.get('exercise_worse'):
+        add('A02', 'appointment', 'الأعراض تزداد أثناء المجهود وتتحسن بالراحة.')
+    if facts.get('chest_pain') or facts.get('shortness_of_breath') or facts.get('palpitations'):
+        add('A03', 'appointment', 'يوجد عرض قلبي أو تنفسي يحتاج تقييمًا إذا استمر.')
+    if facts.get('hypertension') or (systolic is not None and systolic >= 140) or (diastolic is not None and diastolic >= 90):
+        add('A04', 'appointment', 'يوجد تاريخ أو قراءة تشير إلى ارتفاع ضغط الدم.')
+    if facts.get('fatigue') and facts.get('swelling'):
+        add('A05', 'appointment', 'اجتمع التعب غير المعتاد مع تورم الأطراف.')
+    if facts.get('orthopnea'):
+        add('A08', 'appointment', 'الأعراض تسوء عند الاستلقاء وتتحسن بالجلوس.')
+    if pulse is not None and (pulse > 100 or pulse < 50):
+        add('A06', 'appointment', 'نبض الراحة خارج المجال 50–100 ضربة/دقيقة.')
+    if spo2 is not None and spo2 < 95:
+        add('A07', 'appointment', 'تشبع الأكسجين أقل من 95%.')
+
+    priority = {'emergency': 3, 'urgent': 2, 'appointment': 1}
+    level = max((item['level'] for item in fired), key=priority.get, default='routine')
+    matching = [item for item in fired if item['level'] == level]
+    messages = {
+        'emergency': ('نعم — اطلب المساعدة الطارئة الآن',
+                      'اتصل بخدمة الإسعاف المحلية ولا تنتظر نتيجة إضافية من التطبيق.'),
+        'urgent': ('نعم — تحتاج تقييمًا طبيًا عاجلًا اليوم',
+                   'تواصل مع خدمة طبية عاجلة اليوم. عند تدهور الأعراض اتصل بالإسعاف.'),
+        'appointment': ('نعم — يُنصح بحجز موعد مع الطبيب',
+                        'رتب مراجعة طبية لمناقشة الأعراض والقياسات ونتيجة التصنيف.'),
+        'routine': ('لا تظهر حاجة عاجلة لزيارة الطبيب',
+                    'تابع القياسات والرعاية المعتادة، وراجع الطبيب إذا استمرت الأعراض أو تغيرت.'),
+    }
+    title, action = messages[level]
+    return {
+        'level': level,
+        'visit_required': level != 'routine',
+        'title': title,
+        'action': action,
+        'reasons': [item['reason'] for item in matching] or
+                   ['كل الإجابات سلبية، والقياسات المدخلة ضمن حدود قواعد الفرز.'],
+        'fired_rules': fired,
+    }

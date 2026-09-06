@@ -1,19 +1,36 @@
-"""Synthetic demonstration cases only; never added to the training dataset."""
+"""Three UI demonstration cases; none is part of either training dataset."""
 from copy import deepcopy
 
+NO_SYMPTOMS = {
+    'chest_pain': 'no', 'shortness_of_breath': 'no', 'palpitations': 'no',
+    'exercise_worse': 'no', 'hypertension': 'no', 'dizziness': 'no',
+    'sweating': 'no', 'fatigue': 'no', 'swelling': 'no', 'orthopnea': 'no',
+}
+
 DEMOS = {
-    'routine': {'label': '١ · دون علامات عاجلة',
-                'basic': dict(age='40', sex='أنثى', bpm='72', systolic='115', diastolic='75'),
-                'answers': dict(exercise_angina='no', shortness_of_breath='no', hypertension='no'),
-                'warning': 'no', 'note': 'لا يوجد ألم الصدر مع المجهود. لا يوجد ضيق في التنفس.'},
-    'appointment': {'label': '٢ · مراجعة الطبيب',
-                    'basic': dict(age='55', sex='ذكر', bpm='90', systolic='150', diastolic='95'),
-                    'answers': dict(exercise_angina='yes', shortness_of_breath='no', hypertension='yes'),
-                    'warning': 'no', 'note': 'أشعر بألم في صدري عند صعود الدرج. لدي ارتفاع في ضغط الدم.'},
-    'emergency': {'label': '٣ · تنبيه الطوارئ',
-                  'basic': dict(age='40', sex='ذكر', bpm='120', systolic='80', diastolic='50'),
-                  'answers': dict(exercise_angina='yes', shortness_of_breath='yes', hypertension='no'),
-                  'warning': 'yes', 'note': 'حالة اصطناعية: ألم صدر مستمر الآن مع ضيق نفس شديد.'},
+    'routine': {
+        'label': '١ · قياسات مستقرة',
+        'basic': dict(age='40', sex='أنثى', bpm='72', systolic='118', diastolic='76', spo2='98'),
+        'answers': NO_SYMPTOMS,
+        'warning': 'no',
+        'note': 'لا أشعر بألم في الصدر ولا بضيق في التنفس ولا يوجد خفقان.',
+    },
+    'appointment': {
+        'label': '٢ · أعراض مع المجهود',
+        'basic': dict(age='55', sex='ذكر', bpm='88', systolic='145', diastolic='92', spo2='96'),
+        'answers': {**NO_SYMPTOMS, 'chest_pain': 'yes', 'exercise_worse': 'yes',
+                    'hypertension': 'yes', 'fatigue': 'yes'},
+        'warning': 'no',
+        'note': 'أشعر بألم في صدري عند صعود الدرج وأعاني من ضغط مرتفع وتعب.',
+    },
+    'emergency': {
+        'label': '٣ · علامة خطر حالية',
+        'basic': dict(age='63', sex='ذكر', bpm='120', systolic='85', diastolic='55', spo2='88'),
+        'answers': {**NO_SYMPTOMS, 'chest_pain': 'yes', 'shortness_of_breath': 'yes',
+                    'palpitations': 'yes', 'dizziness': 'yes', 'sweating': 'yes'},
+        'warning': 'yes',
+        'note': 'ألم صدر شديد ومستمر الآن مع ضيق تنفس ودوخة وتعرق.',
+    },
 }
 
 

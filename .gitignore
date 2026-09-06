@@ -4,5 +4,8 @@ __pycache__/
 .pytest_cache/
 site/
 artifacts/*.joblib
+data/ddxplus/*.zip
+data/ddxplus/*.zip.part*
+data/multidisease/
 .idea/
 *.log

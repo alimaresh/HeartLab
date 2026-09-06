@@ -49,7 +49,7 @@ def test_loading_switching_clear_and_pause():
             root.update()
             assert app.pulse_chart.bpm == float(DEMOS[key]['basic']['bpm'])
             assert app.current_warning.get() == DEMOS[key]['warning']
-            assert 'اصطناعية' in app.demo_label.get()
+            assert 'تجريبية' in app.demo_label.get()
             app.run()
             assert app.result is not None
         app.toggle_pulse()
