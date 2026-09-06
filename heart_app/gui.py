@@ -165,97 +165,53 @@ class HeartApp:
     """One simple Arabic questionnaire; clinical measurements stay optional."""
 
     def __init__(self, root):
-        from .questionnaire import QUESTIONS, BASIC_FIELDS
         self.root = root
         self.result = None
         self.proposal = None
         self.advanced_window = None
-        root.title('HeartLab | وصف الأعراض')
-        root.geometry('860x780')
-        root.minsize(700, 680)
-        style = ttk.Style(root)
-        style.theme_use('clam')
-        style.configure('TFrame', background='#f3f6fa')
-        style.configure('TLabel', background='#f3f6fa', font=('Segoe UI', 12))
-        style.configure('TRadiobutton', background='#f3f6fa', font=('Segoe UI', 12), padding=5)
-        style.configure('TButton', font=('Segoe UI', 11), padding=8)
-        style.configure('Primary.TButton', background='#17375e', foreground='white')
-        canvas = tk.Canvas(root, background='#f3f6fa', highlightthickness=0)
-        self.canvas = canvas
-        scrollbar = ttk.Scrollbar(root, orient='vertical', command=canvas.yview)
-        canvas.configure(yscrollcommand=scrollbar.set)
-        scrollbar.pack(side='right', fill='y')
-        canvas.pack(side='left', fill='both', expand=True)
-        shell = ttk.Frame(canvas, padding=24)
-        window = canvas.create_window((0, 0), window=shell, anchor='nw')
-        shell.bind('<Configure>', lambda event: canvas.configure(scrollregion=canvas.bbox('all')))
-        canvas.bind('<Configure>', lambda event: canvas.itemconfigure(window, width=event.width))
-        ttk.Label(shell, text='كيف تشعر اليوم؟', font=('Segoe UI', 23, 'bold'), anchor='e').pack(fill='x')
-        ttk.Label(shell, text='أدخل بياناتك والقياسات المتوفرة، ثم أجب عن أسئلة الأعراض.', anchor='e').pack(fill='x', pady=(6, 12))
-        self.basic_values = {}
-        basics = ttk.Frame(shell)
-        basics.pack(fill='x', pady=(0, 8))
-        for index, (key, label) in enumerate(BASIC_FIELDS.items()):
-            row, col = divmod(index, 3)
-            cell = ttk.Frame(basics, padding=5)
-            cell.grid(row=row, column=2-col, sticky='ew')
-            basics.columnconfigure(2-col, weight=1, uniform='basic')
-            ttk.Label(cell, text=label, anchor='e').pack(fill='x')
-            variable = tk.StringVar(value='')
-            variable.trace_add('write', self.invalidate)
-            self.basic_values[key] = variable
-            if key == 'sex':
-                widget = ttk.Combobox(cell, textvariable=variable, values=('ذكر', 'أنثى'), state='readonly', justify='right', width=12)
-            else:
-                widget = ttk.Entry(cell, textvariable=variable, justify='right', width=12)
-            widget.pack(fill='x', pady=4)
-        ttk.Label(shell, text='ضغط الدم أثناء الراحة: مثل 120 / 80. اترك القياس فارغًا إن لم تعرفه.',
-                  anchor='e', font=('Segoe UI', 10)).pack(fill='x', pady=(0, 8))
-        self.answers = {}
-        for key, question in QUESTIONS.items():
-            row = ttk.Frame(shell)
-            row.pack(fill='x', pady=5)
-            ttk.Label(row, text=question, anchor='e').pack(side='right')
-            value = tk.StringVar(value='')
-            self.answers[key] = value
-            value.trace_add('write', self.invalidate)
-            ttk.Radiobutton(row, text='لا', variable=value, value='no').pack(side='left')
-            ttk.Radiobutton(row, text='نعم', variable=value, value='yes').pack(side='left')
-        self.current_warning = tk.StringVar(value='')
-        self.current_warning.trace_add('write', self.invalidate)
-        warning_row = ttk.Frame(shell)
-        warning_row.pack(fill='x', pady=7)
-        ttk.Label(warning_row, text='هل لديك الآن ألم صدر مستمر، أو ضيق نفس شديد، أو إغماء؟',
-                  anchor='e', justify='right', wraplength=540).pack(side='right')
-        ttk.Radiobutton(warning_row, text='لا', variable=self.current_warning, value='no').pack(side='left')
-        ttk.Radiobutton(warning_row, text='نعم', variable=self.current_warning, value='yes').pack(side='left')
-        ttk.Label(shell, text='اكتب أعراضك (اختياري)', anchor='e').pack(fill='x', pady=(14, 4))
-        ttk.Label(shell, text='مثال: أشعر بألم في صدري عند صعود الدرج', foreground='#5d6c7c', anchor='e').pack(fill='x')
-        self.note = tk.Text(shell, height=3, font=('Segoe UI', 12), wrap='word')
-        self.note.tag_configure('right', justify='right')
-        self.note.pack(fill='x', pady=6)
-        self.note.bind('<<Modified>>', self.note_changed)
-        actions = ttk.Frame(shell)
-        actions.pack(fill='x')
-        ttk.Button(actions, text='فهم الأعراض المكتوبة', command=self.parse).pack(side='right')
-        self.apply_button = ttk.Button(actions, text='استخدام الإجابات المستخرجة', command=self.apply, state='disabled')
-        self.apply_button.pack(side='right', padx=6)
-        self.feedback = tk.StringVar(value='ستظهر هنا الأعراض التي يتعرف عليها النظام لتراجعها قبل استخدامها.')
-        ttk.Label(shell, textvariable=self.feedback, anchor='e', justify='right', wraplength=740).pack(fill='x', pady=10)
-        bar = ttk.Frame(shell)
-        bar.pack(fill='x')
-        ttk.Button(bar, text='التقييم المبدئي', style='Primary.TButton', command=self.run).pack(side='right')
-        ttk.Button(bar, text='بدء من جديد', command=self.clear).pack(side='right', padx=6)
-        ttk.Button(bar, text='الفحوصات الاختيارية', command=self.open_advanced).pack(side='left')
-        self.results_output = AdvancedApp.output_box(shell)
-        self.results_output.configure(font=('Segoe UI', 12), height=12)
-        self.results_output.tag_configure('right', justify='right')
-        ttk.Label(shell, text='مشروع تعليمي — النتائج ليست تشخيصًا طبيًا.', foreground='#6b7280', anchor='e').pack(fill='x')
+        self._demo_key = None
+        self.multiclass_window = None
+        self._loading_demo = False
+        from .presentation import build
+        build(self, root)
 
     def invalidate(self, *_):
         self.result = None
         if hasattr(self, 'results_output'):
             AdvancedApp.write(self.results_output, '')
+            self.score_label.set('—')
+            self.class_label.set('بانتظار التقييم')
+        if self._demo_key and not self._loading_demo:
+            self.demo_label.set('بيانات اصطناعية · معدّلة')
+
+    def update_pulse(self, *_):
+        value = self.basic_values['bpm'].get()
+        self.pulse_chart.set_bpm(value)
+        self.bpm_label.set(f'{self.pulse_chart.bpm:.0f} BPM' if self.pulse_chart.bpm is not None else '— BPM')
+
+    def toggle_pulse(self):
+        running = self.pulse_chart.toggle()
+        self.pause_button.configure(text='إيقاف الحركة' if running else 'تشغيل الحركة')
+
+    def load_dummy(self, key):
+        from .demos import get_demo
+        case = get_demo(key)
+        self.clear()
+        self._loading_demo = True
+        try:
+            for field, value in case['basic'].items():
+                self.basic_values[field].set(value)
+            for field, value in case['answers'].items():
+                self.answers[field].set(value)
+            self.current_warning.set(case['warning'])
+            self.note.insert('1.0', case['note'])
+            self.note.tag_add('right', '1.0', 'end')
+            self.note.edit_modified(False)
+            self._demo_key = key
+            self.demo_label.set('بيانات اصطناعية · ' + case['label'])
+            self.feedback.set('تم تحميل مثال اصطناعي. اضغط «ابدأ التقييم» لعرض النتيجة.')
+        finally:
+            self._loading_demo = False
 
     def note_changed(self, _=None):
         if self.note.edit_modified():
@@ -291,6 +247,10 @@ class HeartApp:
             self.feedback.set(str(error))
             return
         AdvancedApp.write(self.results_output, format_summary(self.result))
+        prediction = self.result['prediction']
+        self.score_label.set(f"{prediction['probability']:.0%}" if prediction['available'] else '—')
+        self.class_label.set('تقدير النموذج · ' + prediction['label'] if prediction['available']
+                             else self.result['triage']['title'])
         self.results_output.tag_add('right', '1.0', 'end')
         colors = {'emergency': '#b42318', 'urgent': '#9a3412', 'appointment': '#17375e',
                   'routine': '#17375e', 'incomplete': '#6b7280'}
@@ -298,9 +258,11 @@ class HeartApp:
                                           foreground=colors[self.result['triage']['level']])
         self.results_output.tag_add('decision', '1.0', '1.end')
         self.results_output.see('1.0')
-        self.root.after_idle(lambda: self.canvas.yview_moveto(1))
+        self.canvas.yview_moveto(0)
 
     def clear(self):
+        self._demo_key = None
+        self.demo_label.set('')
         self.current_warning.set('')
         for variable in self.basic_values.values():
             variable.set('')
@@ -327,6 +289,16 @@ class HeartApp:
         for key, value in measured.items():
             advanced.variables[key].set(str(value))
         self.advanced_window.title('HeartLab | الفحوصات الاختيارية — النموذج التعليمي')
+
+    def open_multiclass(self):
+        from .multiclass_gui import MulticlassApp
+        if self.multiclass_window is not None and self.multiclass_window.winfo_exists():
+            self.multiclass_window.lift()
+            return
+        self.multiclass_window = tk.Toplevel(self.root)
+        MulticlassApp(self.multiclass_window, {
+            key: self.basic_values[key].get() for key in ('age', 'sex', 'bpm')
+        })
 
 
 def main():

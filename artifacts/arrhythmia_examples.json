@@ -1,0 +1,44 @@
+[
+  {
+    "source_row": 6,
+    "true_group": 0,
+    "predicted_group": 0,
+    "label": "نمط ضمن المجموعة الطبيعية",
+    "features": {
+      "age": 40.0,
+      "sex": 1.0,
+      "bpm": 70.0,
+      "qrs": 77.0,
+      "pr": 129.0,
+      "qt": 377.0
+    }
+  },
+  {
+    "source_row": 231,
+    "true_group": 1,
+    "predicted_group": 1,
+    "label": "نمط إقفاري أو احتشاء سابق",
+    "features": {
+      "age": 80.0,
+      "sex": 0.0,
+      "bpm": 80.0,
+      "qrs": 93.0,
+      "pr": 183.0,
+      "qt": 358.0
+    }
+  },
+  {
+    "source_row": 2,
+    "true_group": 3,
+    "predicted_group": 3,
+    "label": "نمط اضطراب توصيل أو بنية",
+    "features": {
+      "age": 54.0,
+      "sex": 0.0,
+      "bpm": 75.0,
+      "qrs": 138.0,
+      "pr": 163.0,
+      "qt": 386.0
+    }
+  }
+]

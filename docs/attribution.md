@@ -21,6 +21,15 @@ commit: `9b0259e80188f18fea105e196a7bfc2e68ca89ee`.
 - إزالة تحميل ملف pickle القديم من مسارات التشغيل الجديدة.
 - توحيد واجهة Streamlit مع الخدمة الجديدة؛ API التنبؤ الجديد يعيد قاموسًا ويحتاج 13 حقلًا خامًا.
 - توثيق MkDocs واختبارات وظيفية و`.gitignore`.
+- إضافة واجهة بطاقات مبسطة، ورسم نبض اصطناعي، وثلاث حالات Dummy Data.
+- إضافة مصنف مستقل لأربع مجموعات اعتمادًا على ست خصائص من UCI Arrhythmia.
+
+## بيانات UCI Arrhythmia
+
+[UCI Machine Learning Repository — Arrhythmia](https://archive.ics.uci.edu/dataset/5/arrhythmia)،
+DOI: `10.24432/C5BS32`، والرخصة المعروضة في المصدر CC BY 4.0.
+الملف الأصلي محفوظ مع وصفه في `data/arrhythmia/` وبصمة SHA-256 مثبتة في ملف README الخاص به.
+لا تُنسب هذه البيانات إلى المستودع الأصلي، ولا تُخلط مع `data/heart.csv`.
 
 ## ملفات تاريخية
 

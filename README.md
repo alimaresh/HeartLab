@@ -5,7 +5,7 @@
 | متطلب المادة | التنفيذ |
 | --- | --- |
 | Rule-based ES | عشر قواعد IF/THEN، حقائق، استدلال أمامي، أولوية وتفسير |
-| ML | Logistic Regression معاير للواجهة الأساسية، وDecision Tree للفحوصات التفصيلية |
+| ML | نموذج ثنائي للواجهة الأساسية، وDecision Tree للفحوصات، ومصنف مستقل لأربع مجموعات قلبية |
 | NLP | استخراج معلومات عربي/إنجليزي، تطبيع الأرقام، نفي وتعارضات |
 | GUI Python | تطبيق سطح مكتب Tkinter وواجهة Streamlit اختيارية |
 | Documentation | Markdown وموقع MkDocs بالعربية |
@@ -19,6 +19,7 @@ python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m ml_model.train_model
 .venv\Scripts\python.exe -m heart_app.screening
+.venv\Scripts\python.exe -m heart_app.multiclass
 .venv\Scripts\python.exe app.py
 ```
 
@@ -26,6 +27,7 @@ python -m venv .venv
 تعرض النتيجة توصية المراجعة ووقتها، وتصنيفًا تعليميًا لمرض الشرايين التاجية مع نسبة عندما تسمح البيانات.
 راجع [شرح التصنيف والمصادر والحدود](docs/assessment.md).
 من **الفحوصات الاختيارية** يمكنك تحميل المثال الاصطناعي وتشغيل ES + ML على القياسات.
+زر **تصنيف ECG** يفتح نموذجًا متوسطًا من ستة مدخلات، مع ثلاث حالات Dummy Data، ويعرض أربع مجموعات محتملة بدرجات ترجيح.
 الأعراض وحدها لا تكفي لحساب النسبة؛ لا تُفترض قياسات مفقودة.
 يمكن أيضًا التشغيل بـ`python app.py`؛ يختار بيئة المشروع `.venv` تلقائيًا إن وُجدت.
 

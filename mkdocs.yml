@@ -10,6 +10,7 @@ nav:
   - المتطلبات والمعمارية: architecture.md
   - قاعدة المعرفة: rules.md
   - التعلم الآلي والتقييم: ml.md
+  - مصنف أنماط القلب: multiclass.md
   - التصنيف وتوصية المراجعة: assessment.md
   - معالجة اللغة: nlp.md
   - دليل الواجهة والعرض: user-guide.md
