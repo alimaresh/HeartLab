@@ -1,12 +1,16 @@
+import random
 import tkinter as tk
 import pytest
-from heart_app.demos import DEMOS, get_demo
+from heart_app.demos import DEMOS, DEMO_GROUPS, get_demo
 from heart_app.pulse import parse_bpm, pulse_points
 from heart_app.questionnaire import summarize
 from heart_app.gui import HeartApp
 
 
-@pytest.mark.parametrize('key,level', [('routine', 'routine'), ('appointment', 'appointment'), ('emergency', 'emergency')])
+@pytest.mark.parametrize('key,level', [('routine', 'routine'), ('angina_classic', 'appointment'),
+                                      ('af_classic', 'urgent'), ('attack_classic', 'urgent'),
+                                      ('edema_classic', 'urgent'), ('other_migraine', 'routine'),
+                                      ('other_digestive', 'routine'), ('emergency', 'emergency')])
 def test_demo_outcomes(key, level):
     case = get_demo(key)
     result = summarize(case['answers'], case['basic'], current_warning=case['warning'] == 'yes')
@@ -19,6 +23,46 @@ def test_demo_is_copy():
     case = get_demo('routine')
     case['basic']['age'] = '90'
     assert DEMOS['routine']['basic']['age'] == '40'
+
+
+def test_every_disease_has_two_variants_and_random_is_valid():
+    groups = dict(DEMO_GROUPS)
+    for disease in ('الذبحة الصدرية المستقرة', 'الرجفان الأذيني',
+                    'اشتباه الجلطة القلبية', 'الوذمة الرئوية الحادة'):
+        assert len(groups[disease]) == 2
+    case = get_demo('random', random.Random(42))
+    assert set(case['answers']) == set(DEMOS['routine']['answers'])
+    assert int(case['basic']['systolic']) > int(case['basic']['diastolic'])
+    assert 18 <= int(case['basic']['age']) <= 85
+
+
+def test_random_generator_produces_varied_runnable_cases():
+    rng = random.Random(7)
+    cases = [get_demo('random', rng) for _ in range(20)]
+    assert len({tuple(case['basic'].values()) for case in cases}) > 1
+    for case in cases:
+        result = summarize(case['answers'], case['basic'])
+        assert result['triage']['level'] in {'routine', 'appointment', 'urgent'}
+        assert result['prediction']['available']
+
+
+@pytest.mark.parametrize('key,expected', [
+    ('angina_classic', 'stable_angina'), ('angina_variant', 'stable_angina'),
+    ('af_classic', 'atrial_fibrillation'), ('af_variant', 'atrial_fibrillation'),
+    ('attack_classic', 'heart_attack'), ('attack_variant', 'heart_attack'),
+    ('edema_classic', 'pulmonary_edema'), ('edema_variant', 'pulmonary_edema'),
+])
+def test_disease_demos_match_their_intended_model_class(key, expected):
+    case = get_demo(key)
+    result = summarize(case['answers'], case['basic'])
+    assert result['prediction']['top']['class'] == expected
+
+
+@pytest.mark.parametrize('key', ['other_migraine', 'other_digestive'])
+def test_out_of_scope_demos_remain_inconclusive(key):
+    case = get_demo(key)
+    result = summarize(case['answers'], case['basic'])
+    assert result['prediction']['inconclusive']
 
 
 @pytest.mark.parametrize('text,expected', [('٧٢', 72), ('120', 120), ('', None), ('nan', None), ('inf', None), ('-1', None), ('72.5', None)])

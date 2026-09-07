@@ -19,7 +19,7 @@ def app():
 
 
 def test_one_screen_dummy_nlp_and_result(app):
-    app.load_dummy('appointment')
+    app.load_dummy('angina_classic')
     app.root.update()
     app.run()
     assert app.result['prediction']['available']

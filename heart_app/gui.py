@@ -55,7 +55,7 @@ class HeartApp:
             self.note.edit_modified(False)
             self._demo_key = key
             self.demo_label.set('بيانات تجريبية · ' + case['label'])
-            self.feedback.set('تم تحميل حالة من بيانات العرض. اضغط «تحليل الحالة».')
+            self.feedback.set('تم تحميل حالة اختبار. يمكنك تعديلها أو الضغط على «تحليل الحالة».')
         finally:
             self._loading_demo = False
 

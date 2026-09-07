@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 from .questionnaire import BASIC_FIELDS, QUESTIONS
 from .pulse import PulseChart
-from .demos import DEMOS
+from .demos import DEMOS, DEMO_GROUPS
 
 BG, WHITE, INK, MUTED, BORDER, TEAL = '#f6f8fa', '#ffffff', '#14243b', '#718092', '#e2e8ee', '#127b83'
 
@@ -82,11 +82,16 @@ def build(app, root):
     footer.pack(side='bottom', fill='x')
     button(footer, 'تحليل الحالة  ←', app.run, True).pack(side='right')
     button(footer, 'بدء من جديد', app.clear).pack(side='right', padx=10)
-    app.demo_button = tk.Menubutton(footer, text='Dummy Data  ▾', font=('Segoe UI', 11),
+    app.demo_button = tk.Menubutton(footer, text='بيانات اختبار  ▾', font=('Segoe UI', 11),
                                   bg=WHITE, fg=TEAL, relief='flat', padx=14, pady=9, cursor='hand2')
     menu = tk.Menu(app.demo_button, tearoff=False, font=('Segoe UI', 11))
-    for key, case in DEMOS.items():
-        menu.add_command(label=case['label'], command=lambda selected=key: app.load_dummy(selected))
+    for group_label, keys in DEMO_GROUPS:
+        submenu = tk.Menu(menu, tearoff=False, font=('Segoe UI', 11))
+        for key in keys:
+            item_label = 'بيانات عشوائية جديدة' if key == 'random' else DEMOS[key]['label']
+            submenu.add_command(label=item_label,
+                                command=lambda selected=key: app.load_dummy(selected))
+        menu.add_cascade(label=group_label, menu=submenu)
     app.demo_button.configure(menu=menu)
     app.demo_button.pack(side='left')
     label(footer, 'تعليمي — ليس تشخيصًا طبيًا', 9, MUTED).pack(side='left', padx=12)
