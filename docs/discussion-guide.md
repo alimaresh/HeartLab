@@ -157,8 +157,11 @@ ML يكتشف نمط المرض، بينما القواعد تحدد أولوي�
 
 ## أهم الملفات
 
+كل المسارات التالية محسوبة من جذر المشروع `Heart Diagnosis/`:
+
 | الملف | المحتوى |
 | --- | --- |
+| `app.py` | نقطة تشغيل تطبيق سطح المكتب |
 | `heart_app/diagnosis.py` | تدريب وتشغيل Random Forest |
 | `heart_app/nlp_model.py` | تدريب وتشغيل نموذج NLP |
 | `heart_app/triage.py` | قواعد النظام الخبير |
@@ -166,8 +169,34 @@ ML يكتشف نمط المرض، بينما القواعد تحدد أولوي�
 | `heart_app/gui.py` | أحداث الواجهة |
 | `heart_app/presentation.py` | تصميم الشاشة |
 | `heart_app/demos.py` | حالات الاختبار الثابتة والعشوائية |
-| `models/` | النموذجان المدربان وتقارير المقاييس |
-| `data/` | مجموعتا بيانات الأمراض وNLP |
+| `models/disease_classifier.joblib` | نموذج الأمراض الأربعة المدرب |
+| `models/disease_metrics.json` | مقاييس واختبار نموذج الأمراض |
+| `models/nlp_symptom_model.joblib` | نموذج استخراج الأعراض المدرب |
+| `models/nlp_metrics.json` | مقاييس واختبار نموذج NLP |
+| `data/ddxplus/cardiac_subset.csv` | عينة تدريب الأمراض المحضرة |
+| `data/nlp/symptom_texts.csv` | جمل تدريب NLP المعنونة |
+| `scripts/prepare_ddxplus.py` | تنزيل DDXPlus وتحضير عينة الأمراض |
+| `scripts/build_nlp_dataset.py` | إعادة بناء بيانات NLP |
+| `tests/test_assessment.py` | اختبارات نموذج الأمراض وقواعد القرار |
+| `tests/test_questionnaire.py` | اختبارات الإدخال وNLP والحالة غير المعروفة |
+| `tests/test_demos_pulse.py` | اختبارات Dummy Data والرسم |
+| `docs/discussion-guide.md` | هذا الدليل |
+| `mkdocs.yml` | إعداد قائمة موقع التوثيق |
+
+## مسار الاستدعاء أثناء التشغيل
+
+```text
+app.py
+└── heart_app/gui.py
+    ├── heart_app/presentation.py
+    ├── heart_app/demos.py
+    └── heart_app/questionnaire.py
+        ├── heart_app/nlp_model.py
+        │   └── models/nlp_symptom_model.joblib
+        ├── heart_app/diagnosis.py
+        │   └── models/disease_classifier.joblib
+        └── heart_app/triage.py
+```
 
 ## أوامر سريعة
 
