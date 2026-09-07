@@ -81,9 +81,9 @@ DEMOS = {
     },
     'other_migraine': {
         'label': 'خارج النطاق · صداع وحساسية للضوء',
-        'basic': dict(age='29', sex='أنثى', bpm='74', systolic='116', diastolic='74', spo2='99'),
+        'basic': dict(age='31', sex='أنثى', bpm='74', systolic='116', diastolic='74', spo2='99'),
         'answers': NO_SYMPTOMS, 'warning': 'no',
-        'note': 'أعاني من صداع نابض وحساسية للضوء وغثيان، ولا توجد أعراض قلبية.',
+        'note': 'أعاني من صداع نابض وحساسية شديدة للضوء مع غثيان وألم في البطن.',
     },
     'other_digestive': {
         'label': 'خارج النطاق · أعراض هضمية',
