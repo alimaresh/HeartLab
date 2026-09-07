@@ -94,6 +94,7 @@ class HeartApp:
                 {key: variable.get() for key, variable in self.answers.items()},
                 {key: variable.get() for key, variable in self.basic_values.items()},
                 current_warning=self.current_warning.get() == 'yes',
+                note=self.note.get('1.0', 'end'),
             )
         except (ValueError, OSError, KeyError, EOFError) as error:
             self.feedback.set(str(error))

@@ -56,3 +56,14 @@ def test_no_symptoms_is_inconclusive_and_routine():
     assert 'ترتيب التصنيفات' not in summary
     assert 'DDXPlus' not in summary
     assert 'إذا استمرت الأعراض' in summary
+
+
+def test_unknown_written_symptoms_are_not_forced_into_a_known_disease():
+    result = summarize(all_answers(), dict(age='31', sex='أنثى', bpm='74', systolic='116',
+                                           diastolic='74', spo2='99'),
+                       note='لدي صداع نابض وحساسية للضوء وألم في البطن')
+    assert result['prediction']['top']['class'] == 'unknown'
+    assert result['triage']['visit_required']
+    output = format_summary(result)
+    assert 'حالة غير معروفة للنظام' in output
+    assert 'زيارة الطبيب' in output

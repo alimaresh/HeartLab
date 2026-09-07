@@ -59,10 +59,14 @@ def test_disease_demos_match_their_intended_model_class(key, expected):
 
 
 @pytest.mark.parametrize('key', ['other_migraine', 'other_digestive'])
-def test_out_of_scope_demos_remain_inconclusive(key):
+def test_out_of_scope_demos_are_unknown_and_recommend_a_doctor(key):
     case = get_demo(key)
-    result = summarize(case['answers'], case['basic'])
+    result = summarize(case['answers'], case['basic'], note=case['note'])
     assert result['prediction']['inconclusive']
+    assert result['prediction']['unknown']
+    assert result['prediction']['top']['class'] == 'unknown'
+    assert result['triage']['level'] == 'appointment'
+    assert any(rule['id'] == 'A09' for rule in result['triage']['fired_rules'])
 
 
 @pytest.mark.parametrize('text,expected', [('٧٢', 72), ('120', 120), ('', None), ('nan', None), ('inf', None), ('-1', None), ('72.5', None)])

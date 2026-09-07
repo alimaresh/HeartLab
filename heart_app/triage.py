@@ -27,6 +27,8 @@ def evaluate(basic, facts, current_warning=False, prediction=None):
 
     if prediction and not prediction.get('inconclusive'):
         add('A01', 'appointment', f"تطابق نمط الأعراض بصورة أكبر مع: {prediction['top']['label']}.")
+    if prediction and prediction.get('unknown'):
+        add('A09', 'appointment', 'الأعراض المكتوبة خارج نطاق الحالات التي يعرفها النظام.')
     if facts.get('exercise_worse'):
         add('A02', 'appointment', 'الأعراض تزداد أثناء المجهود وتتحسن بالراحة.')
     if facts.get('chest_pain') or facts.get('shortness_of_breath') or facts.get('palpitations'):

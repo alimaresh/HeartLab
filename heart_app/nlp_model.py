@@ -109,7 +109,7 @@ def train(output_dir=None):
     return report
 
 
-def predict(text, artifact=MODEL, confidence_threshold=.40):
+def predict(text, artifact=MODEL, confidence_threshold=.75):
     cleaned = normalize(text)
     if not cleaned:
         raise ValueError('اكتب وصفًا للأعراض أولًا.')

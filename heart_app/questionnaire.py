@@ -65,11 +65,11 @@ def review_note(note):
                  f"({item['confidence']:.0%})" for item in result['details']]
         lines.append('راجع الاقتراحات ثم اضغط «استخدام الإجابات».')
     else:
-        lines = ['لم يصل نموذج NLP إلى إجابة موثوقة؛ أجب عن الأسئلة يدويًا.']
+        lines = ['لم يتعرف النموذج على أعراض ضمن نطاقه. ستظهر الحالة كغير معروفة إذا كانت إجابات الأسئلة سلبية.']
     return result, '\n'.join(lines)
 
 
-def summarize(answers, basic_values=None, current_warning=False):
+def summarize(answers, basic_values=None, current_warning=False, note=''):
     from .diagnosis import predict
     from .triage import evaluate
 
@@ -92,8 +92,22 @@ def summarize(answers, basic_values=None, current_warning=False):
         raise ValueError(f'أجب عن جميع الأسئلة؛ بقي {len(unanswered)} دون إجابة.')
     basic = validate_basic(basic_values or {}, require_all=True)
     facts = {key: value == 'yes' for key, value in answers.items()}
-    prediction = predict(basic, facts)
-    prediction['available'] = True
+    unknown_note = False
+    if str(note).strip() and not any(facts.values()):
+        extracted = nlp_predict(note)
+        unknown_note = not extracted['details']
+    if unknown_note:
+        prediction = {
+            'available': True, 'unknown': True, 'inconclusive': True, 'ranking': [],
+            'top': {
+                'class': 'unknown', 'label': 'حالة غير معروفة للنظام', 'score': 0.0,
+                'detail': 'الأعراض المكتوبة لا تتوافق مع الحالات الأربع التي يعرفها النموذج.',
+            },
+            'notice': 'لا يحاول النظام تخمين مرض خارج نطاق تدريبه.',
+        }
+    else:
+        prediction = predict(basic, facts)
+        prediction['available'] = True
     triage = evaluate(basic, facts, False, prediction)
     return {'basic': basic, 'facts': facts, 'prediction': prediction, 'triage': triage}
 
@@ -103,7 +117,10 @@ def format_summary(result):
     lines = ['التوصية', triage['title'], triage['action'], '', 'النتيجة الأولية']
     if prediction.get('available'):
         top = prediction['top']
-        if prediction.get('inconclusive'):
+        if prediction.get('unknown'):
+            lines += [top['label'], top['detail'],
+                      'يُنصح بزيارة الطبيب لتقييم الأعراض وتحديد سببها.']
+        elif prediction.get('inconclusive'):
             lines += [top['label'], top['detail'],
                       'إذا استمرت الأعراض أو ظهرت أعراض جديدة، راجع الطبيب.']
         else:
