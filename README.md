@@ -33,6 +33,8 @@ python -m venv .venv
 
 ## التحقق والتوثيق
 
+للمراجعة قبل العرض، افتح [دليل المناقشة السريع](docs/discussion-guide.md).
+
 ```powershell
 .venv\Scripts\python.exe -m pytest -q
 .venv\Scripts\python.exe -m mkdocs build --strict

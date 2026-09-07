@@ -6,6 +6,7 @@ theme:
   name: mkdocs
 nav:
   - الرئيسية: index.md
+  - دليل المناقشة السريع: discussion-guide.md
   - التشغيل: setup.md
   - المتطلبات والمعمارية: architecture.md
   - قاعدة المعرفة: rules.md
