@@ -1,8 +1,11 @@
-"""Curated and random UI cases. Demo rows never enter either training dataset."""
+"""حالات واجهة منتقاة وعشوائية؛ لا تدخل هذه الصفوف في بيانات التدريب."""
+# deepcopy يمنع تعديل القاموس الأصلي عندما يغير المستخدم المثال.
 from copy import deepcopy
+# random يولد قياسات وأعراضًا مختلفة للحالة العشوائية.
 import random
 
 
+# قالب إجابات سلبية لجميع الأعراض العشرة.
 NO_SYMPTOMS = {
     'chest_pain': 'no', 'shortness_of_breath': 'no', 'palpitations': 'no',
     'exercise_worse': 'no', 'hypertension': 'no', 'dizziness': 'no',
@@ -11,9 +14,12 @@ NO_SYMPTOMS = {
 
 
 def symptoms(**positive):
+    """أنشئ إجابات كاملة مع تحويل الأعراض المطلوبة فقط إلى yes."""
+    # ننسخ القالب السلبي ثم نستبدل المفاتيح ذات القيمة الصادقة.
     return {**NO_SYMPTOMS, **{key: 'yes' for key, enabled in positive.items() if enabled}}
 
 
+# حالات ثابتة تغطي المسار الروتيني والطوارئ والفئات الأربع وخارج النطاق.
 DEMOS = {
     'routine': {
         'label': 'قياسات مستقرة · دون أعراض',
@@ -100,6 +106,7 @@ DEMOS = {
 }
 
 
+# يحدد ترتيب مجموعات الحالات وعناوينها داخل قائمة الواجهة.
 DEMO_GROUPS = (
     ('حالات عامة', ('routine', 'emergency')),
     ('الذبحة الصدرية المستقرة', ('angina_classic', 'angina_variant')),
@@ -110,6 +117,7 @@ DEMO_GROUPS = (
 )
 
 
+# عبارات عربية قصيرة تستخدم لبناء وصف الحالة العشوائية من إجاباتها.
 RANDOM_PHRASES = {
     'chest_pain': 'ألم في الصدر', 'shortness_of_breath': 'ضيق في التنفس',
     'palpitations': 'خفقان', 'exercise_worse': 'تزداد الأعراض مع المجهود',
@@ -120,15 +128,25 @@ RANDOM_PHRASES = {
 
 
 def random_demo(rng=None):
+    """ولّد حالة صالحة عشوائيًا لأغراض تجربة الواجهة."""
+    # SystemRandom يستخدم مصدر النظام، ويمكن حقن مولد ثابت في الاختبارات.
     rng = rng or random.SystemRandom()
+    # نولد الانبساطي أولًا حتى نضمن أن الانقباضي أعلى منه لاحقًا.
     diastolic = rng.randint(55, 105)
+    # الحد الأدنى يحافظ على فرق 20 وعلى ضغط انقباضي لا يقل عن 90.
     systolic = rng.randint(max(90, diastolic + 20), 175)
+    # لكل عرض احتمال 28% أن تكون إجابته نعم.
     answers = {key: ('yes' if rng.random() < .28 else 'no') for key in NO_SYMPTOMS}
+    # نحول الأعراض الإيجابية إلى عبارات مفهومة لبناء الوصف.
     selected = [RANDOM_PHRASES[key] for key, value in answers.items() if value == 'yes']
+    # نكتب قائمة الأعراض أو رسالة واضحة إذا لم يختر المولد أي عرض.
     note = ('أعراض مولدة عشوائيًا: ' + '، '.join(selected) + '.' if selected else
             'حالة عشوائية بلا أعراض من الأسئلة الحالية.')
+    # نعيد نفس بنية الحالات الثابتة كي تحملها الواجهة بالطريقة نفسها.
     return {
+        # الرقم العشوائي يميز الحالة الجديدة في شريط الرأس.
         'label': 'عشوائي · ' + str(rng.randint(1000, 9999)),
+        # تحول الأعداد إلى نصوص لأن حقول Tkinter تستقبل StringVar.
         'basic': dict(age=str(rng.randint(18, 85)), sex=rng.choice(('ذكر', 'أنثى')),
                       bpm=str(rng.randint(48, 135)), systolic=str(systolic),
                       diastolic=str(diastolic), spo2=str(rng.randint(89, 100))),
@@ -137,4 +155,6 @@ def random_demo(rng=None):
 
 
 def get_demo(key, rng=None):
+    """أعد حالة عشوائية جديدة أو نسخة عميقة من الحالة الثابتة المطلوبة."""
+    # النسخة العميقة تعزل القواميس المتداخلة الأصلية عن تعديلات الشاشة.
     return random_demo(rng) if key == 'random' else deepcopy(DEMOS[key])
